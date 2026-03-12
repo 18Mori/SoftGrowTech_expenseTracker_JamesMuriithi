@@ -1,15 +1,51 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class='p-6 max-w-sm mx-auto mb-6'>
-  <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
-    Add Expense
-  </button>
-</div>
-<div class="p-6 max-w-sm mx-auto bg-white rounded-xl shadow-md flex items-center space-x-4 border-l-4 border-indigo-500">
-  <div>
-    <div class="text-sm font-medium text-gray-500">Current Balance</div>
-    <p class="text-2xl font-bold text-black">KES 45,000</p>
-  </div>
-</div>
+<div class="max-w-4xl mx-auto">
+        <header class="mb-8 flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-slate-800">Expense Tracker</h1>
+            <div class="bg-white shadow-sm p-4 rounded-xl border-l-4 border-green-500">
+                <p class="text-xs text-slate-500 uppercase tracking-wider">Total Spent</p>
+                <p class="text-2xl font-black text-slate-900">KES {{ total_balance }}</p>
+            </div>
+        </header>
+        <section class="bg-white p-6 rounded-2xl shadow-sm mb-8">
+            <form method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {% csrf_token %}
+                <input type="text" name="title" placeholder="What did you buy?" class="border-slate-200 rounded-lg focus:ring-blue-500">
+                <input type="number" step="0.01" name="amount" placeholder="Amount" class="border-slate-200 rounded-lg">
+                <select  name="category" class="border-slate-200 rounded-lg">
+                    <option value="Food">Food</option>
+                    <option value="Utilities">Utilities</option>
+                    <option value="Entertainment">Entertainment</option>
+                    <option value="Rent">Rent</option>
+                    <option value="Transport">Transport</option>
+                </select>
+                <button type="submit" class="bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition">Add</button>
+            </form>
+        </section>
+        <div class="space-y-4">
+            {% for x in expenses %}
+            <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm">
+    <div>
+        <p class="font-semibold text-slate-800">{{ x.title }}</p>
+        <span class="text-xs bg-slate-100 px-2 py-1 rounded text-slate-500">{{ x.category }}</span>
+    </div>
+    
+    <div class="flex items-center space-x-4">
+        <p class="font-bold text-red-500">- KES {{ x.amount }}</p>
+        
+        <form action="{% url 'delete-expense' x.id %}" method="POST" onsubmit="return confirm('Delete this expense?');">
+            {% csrf_token %}
+            <button type="submit" class="text-slate-300 hover:text-red-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </form>
+              </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
