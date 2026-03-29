@@ -18,7 +18,7 @@ class Expense(models.Model):
     title = models.CharField(max_length=200)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
-    transaction_type = models.CharField(max_length=10, choices=TYPES)
+    # transaction_type = models.CharField(max_length=10, choices=TYPES)
     date = models.DateField(auto_now_add=True)
 
     def __str__(self):

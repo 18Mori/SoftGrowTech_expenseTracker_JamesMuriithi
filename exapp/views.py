@@ -15,11 +15,10 @@ def expense_list(request):
     transactions = Expense.objects.filter(user=request.user).order_by('-date')
     
     daily_total = transactions.filter(date=today).aggregate(Sum('amount'))['amount__sum'] or 0
-    weekly_total = transactions.filter(date=week_start).aggregate(Sum('amount'))['amount__sum'] or 0
-    monthly_total = transactions.filter(date=month_start).aggregate(Sum('amount'))['amount__sum'] or 0
+    weekly_total = transactions.filter(date__gte=week_start).aggregate(Sum('amount'))['amount__sum'] or 0
+    monthly_total = transactions.filter(date__gte=month_start).aggregate(Sum('amount'))['amount__sum'] or 0
     
     expenses = Expense.objects.filter(user=request.user).order_by('-date')
-    daily_total = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
     
     if request.method == "POST":
         serializer = ExpenseSerializer(data=request.POST)
