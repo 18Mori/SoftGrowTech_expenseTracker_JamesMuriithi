@@ -31,21 +31,32 @@
                     <option value="Rent">Rent</option>
                     <option value="Transport">Transport</option>
                 </select>
+                <select name="transaction_type" class="border-gray-200 rounded-xl px-4 py-3">
+                    <option value="EXPENSE">Expense</option>
+                    <option value="INCOME">Income</option>
+                </select>
                 <button type="submit" class="bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition">Add</button>
             </form>
         </section>
-        <div class="space-y-4">
-            {% for x in expenses %}
-            <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm">
-    <div>
-        <p class="font-semibold text-slate-800">{{ x.title }}</p>
-        <span class="text-xs bg-slate-100 px-2 py-1 rounded text-slate-500">{{ x.category }}</span>
-    </div>
-    
-    <div class="flex items-center space-x-4">
-        <p class="font-bold text-red-500">- KES {{ x.amount }}</p>
-        
-        <form action="{% url 'delete-expense' x.id %}" method="POST" onsubmit="return confirm('Delete this expense?');">
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+            <table class="w-full text-left">
+                <thead class="bg-gray-50 border-b border-gray-100">
+                    <tr>
+                        <th class="px-6 py-4 font-bold text-gray-600">Date</th>
+                        <th class="px-6 py-4 font-bold text-gray-600">Title</th>
+                        <th class="px-6 py-4 font-bold text-gray-600">Category</th>
+                        <th class="px-6 py-4 text-right font-bold text-gray-600">Amount</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for x in expenses %}
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 text-gray-500">{{ x.date }}</td>
+                        <td class="px-6 py-4 font-semibold">{{ x.title }}</td>
+                        <td class="px-6 py-4"><span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-bold">{{ x.category }}</span></td>
+                        <td class="px-6 py-4 text-right font-black {% if x.transaction_type == 'EXPENSE' %}text-red-500{% else %}text-green-500{% endif %}">
+                            {% if x.transaction_type == 'EXPENSE' %}-{% else %}+{% endif %} KES {{ x.amount }}
+                            <form action="{% url 'delete-expense' x.id %}" method="POST" onsubmit="return confirm('Delete this expense?');">
             {% csrf_token %}
             <button type="submit" class="text-slate-300 hover:text-red-600 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -53,9 +64,11 @@
                 </svg>
               </button>
             </form>
-              </div>
-            </div>
-            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 {% endblock %}

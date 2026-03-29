@@ -4,6 +4,7 @@ from .serializers import *
 from django.db.models import Sum
 from django.utils import timezone
 from datetime import timedelta
+from django.contrib import messages
 
 
 
@@ -12,19 +13,20 @@ def expense_list(request):
     week_start = today - timedelta(days=today.weekday())
     month_start = today.replace(day=1)
     
-    transactions = Expense.objects.filter(user=request.user).order_by('-date')
-    
-    daily_total = transactions.filter(date=today).aggregate(Sum('amount'))['amount__sum'] or 0
-    weekly_total = transactions.filter(date__gte=week_start).aggregate(Sum('amount'))['amount__sum'] or 0
-    monthly_total = transactions.filter(date__gte=month_start).aggregate(Sum('amount'))['amount__sum'] or 0
-    
     expenses = Expense.objects.filter(user=request.user).order_by('-date')
+    
+    daily_total = expenses.filter(date=today).aggregate(Sum('amount'))['amount__sum'] or 0
+    weekly_total = expenses.filter(date__gte=week_start).aggregate(Sum('amount'))['amount__sum'] or 0
+    monthly_total = expenses.filter(date__gte=month_start).aggregate(Sum('amount'))['amount__sum'] or 0
     
     if request.method == "POST":
         serializer = ExpenseSerializer(data=request.POST)
         if serializer.is_valid():
             serializer.save(user=request.user)
+            messages.success(request, 'Added successfully!')
             return redirect('home')
+        else:
+            messages.error(request, 'Error!! Plese check the form & try again.')
     
     return render(request, 'Home.html', {
         'expenses': expenses,
@@ -37,5 +39,6 @@ def delete_expense(request, pk):
     expense = get_object_or_404(Expense, id=pk, user=request.user)
     if request.method == 'POST':
         expense.delete()
+        messages.warning(request, "Deleted.")
     return redirect('home')
     
