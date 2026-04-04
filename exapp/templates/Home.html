@@ -8,16 +8,19 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-blue-500">
                 <p class="text-sm font-bold text-gray-400 uppercase">Today</p>
-                <p class="text-2xl font-bold">KES {{ daily_total }}</p>
+                <p class="text-2xl font-bold">KES {{ daily_net }}</p>
             </div>
             <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-purple-500">
                 <p class="text-sm font-bold text-gray-400 uppercase">This Week</p>
-                <p class="text-2xl font-bold">KES {{ weekly_total }}</p>
+                <p class="text-2xl font-bold">KES {{ weekly_net }}</p>
             </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-green-500">
-                <p class="text-sm font-bold text-gray-400 uppercase">This Month</p>
-                <p class="text-2xl font-bold">KES {{ monthly_total }}</p>
-            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 {% if monthly_net >= 0 %}border-green-500{% else %}border-red-500{% endif %}">
+    <p class="text-sm font-bold text-gray-400 uppercase">Monthly Net Balance</p>
+    <p class="text-2xl font-bold {% if monthly_net >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
+        KES {{ monthly_net }}
+    </p>
+    <p class="text-xs text-gray-500">In: +{{ monthly_in }} | Out: -{{ monthly_out }}</p>
+</div>
         </div>
         <section class="bg-white p-6 rounded-2xl shadow-sm mb-8">
             <form method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-4">
