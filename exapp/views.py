@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from .models import *
 from .serializers import *
 from django.db.models import Sum
@@ -12,6 +12,21 @@ def expense_list(request):
     today = timezone.now().date()
     week_start = today - timedelta(days=today.weekday())
     month_start = today.replace(day=1)
+    
+    
+    if request.method == 'POST':
+        amount = request.POST.get('amount')
+        category = request.POST.get('category')
+        
+        current_user = request.user if request.user.is_authenticated else None
+        
+        Expense.objects.create(
+            user=current_user,
+            amount=amount,
+            category=category,
+        )
+        return redirect('home')
+    
     
     expenses = Expense.objects.all().order_by('-date')
     
