@@ -8,11 +8,11 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-blue-500">
                 <p class="text-sm font-bold text-gray-400 uppercase">Today</p>
-                <p class="text-2xl font-bold">KES {{ daily_net }}</p>
+                <p class="text-2xl font-bold text-blue-500">KES {{ daily_net }}</p>
             </div>
             <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-purple-500">
                 <p class="text-sm font-bold text-gray-400 uppercase">This Week</p>
-                <p class="text-2xl font-bold">KES {{ weekly_net }}</p>
+                <p class="text-2xl font-bold text-purple-500">KES {{ weekly_net }}</p>
             </div>
             <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 {% if monthly_net >= 0 %}border-green-500{% else %}border-red-500{% endif %}">
     <p class="text-sm font-bold text-gray-400 uppercase">Monthly Net Balance</p>
@@ -56,7 +56,7 @@
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-4 text-gray-500">{{ x.date }}</td>
                         <td class="px-6 py-4 font-semibold">{{ x.title }}</td>
-                        <td class="px-6 py-4"><span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-bold">{{ x.category }}</span></td>
+                        <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-bold {{ x.category_color_class }}">{{ x.category }}</span></td>
                         <td class="px-6 py-4 text-right font-black {% if x.transaction_type == 'EXPENSE' %}text-red-500{% else %}text-green-500{% endif %}">
                             {% if x.transaction_type == 'EXPENSE' %}-{% else %}+{% endif %} KES {{ x.amount }}
                             <form action="{% url 'delete-expense' x.id %}" method="POST" onsubmit="return confirm('Delete this expense?');">
@@ -65,7 +65,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                 </svg>
-              </button>
+                </button>
             </form>
                         </td>
                     </tr>
