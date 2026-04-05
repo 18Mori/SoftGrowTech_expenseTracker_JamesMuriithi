@@ -14,11 +14,11 @@ class Expense(models.Model):
         ('Utilities', 'Utilities'),
     ]
     
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=200)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
-    transaction_type = models.CharField(max_length=10, choices=TYPES, null=True)
+    transaction_type = models.CharField(max_length=10, choices=TYPES, null=True, blank=True)
     date = models.DateField(auto_now_add=True)
 
     CATEGORY_STYLES = {
