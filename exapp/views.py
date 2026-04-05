@@ -15,13 +15,17 @@ def expense_list(request):
     
     
     if request.method == 'POST':
+        title = request.POST.get('title')
         amount = request.POST.get('amount')
         category = request.POST.get('category')
+        transaction_type = request.POST.get('transaction_type')
         
         
         Expense.objects.create(
             amount=amount,
             category=category,
+            title=title,
+            transaction_type=transaction_type
         )
         return redirect('home')
     
