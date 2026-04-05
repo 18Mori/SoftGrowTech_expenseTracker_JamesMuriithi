@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .serializers import *
 from django.db.models import Sum
@@ -18,10 +18,8 @@ def expense_list(request):
         amount = request.POST.get('amount')
         category = request.POST.get('category')
         
-        current_user = request.user if request.user.is_authenticated else None
         
         Expense.objects.create(
-            user=current_user,
             amount=amount,
             category=category,
         )
@@ -42,7 +40,6 @@ def expense_list(request):
     if request.method == "POST":
         serializer = ExpenseSerializer(data=request.POST)
         if serializer.is_valid():
-            serializer.save(user=request.user)
             messages.success(request, 'Added successfully!')
             return redirect('home')
         else:
@@ -84,7 +81,7 @@ def expense_list(request):
     })
     
 def delete_expense(request, pk):
-    expense = get_object_or_404(Expense, id=pk, user=request.user)
+    expense = get_object_or_404(Expense, id=pk)
     if request.method == 'POST':
         expense.delete()
         messages.warning(request, "Deleted.")
