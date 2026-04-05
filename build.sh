@@ -1,6 +1,3 @@
-echo 'Installing dependencies...'
-python -m pip install -r requirements.txt
-
-echo 'Running Migrations...'
-python manage.py makemigrations --noinput
-python manage.py migrate --noinput
+pip install -r requirements.txt
+python manage.py makemigrations
+python manage.py migrate
