@@ -13,7 +13,7 @@ def expense_list(request):
     week_start = today - timedelta(days=today.weekday())
     month_start = today.replace(day=1)
     
-    
+    ##
     if request.method == 'POST':
         title = request.POST.get('title')
         amount = request.POST.get('amount')
@@ -28,7 +28,7 @@ def expense_list(request):
             transaction_type=transaction_type
         )
         return redirect('home')
-    
+    ##
     
     expenses = Expense.objects.all().order_by('-date')
     
