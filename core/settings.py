@@ -71,15 +71,6 @@ DATABASES = {
     'default': dj_database_url.config(default=os.getenv('DATABASE_URL'),conn_max_age=600,conn_health_checks=True, ssl_require=True if os.environ.get('DATABASE_URL') else False)
     
 }
-if not DATABASES['default']:
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'expense_db',
-        'USER': 'user-db',
-        'PASSWORD': 'KeyPoint',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 

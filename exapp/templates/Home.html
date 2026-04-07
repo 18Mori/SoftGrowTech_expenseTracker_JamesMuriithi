@@ -1,78 +1,159 @@
-{% extends 'base.html' %}
-
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <div class="max-w-4xl mx-auto">
-        <header class="mb-8 flex justify-between items-center">
-            <h1 class="text-3xl font-bold text-slate-800">Expense Tracker</h1>
-        </header>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 {% if daily_net >= 0 %}border-blue-500{% else %}border-red-500{% endif %}">
-                <p class="text-sm font-bold text-gray-400 uppercase">Today</p>
-                <p class="text-2xl font-bold {% if daily_net >= 0 %}text-blue-500{% else %}text-red-500{% endif %}">KES {{ daily_net }}</p>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 {% if weekly_net >= 0 %}border-purple-500{% else %}border-red-500{% endif %}">
-                <p class="text-sm font-bold text-gray-400 uppercase">This Week</p>
-                <p class="text-2xl font-bold {% if weekly_net >= 0 %}text-purple-500{% else %}text-red-500{% endif %}">KES {{ weekly_net }}</p>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 {% if monthly_net >= 0 %}border-green-500{% else %}border-red-500{% endif %}">
-    <p class="text-sm font-bold text-gray-400 uppercase">Monthly Net Balance</p>
-    <p class="text-2xl font-bold {% if monthly_net >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
-        KES {{ monthly_net }}
-    </p>
-    <p class="text-xs text-gray-500">In: {{ monthly_in }} | Out: {{ monthly_out }}</p>
-</div>
+    <header class="mb-8 flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-slate-800">Expense Tracker</h1>
+    </header>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div
+        class="bg-white p-6 rounded-2xl shadow-sm border-l-4 {% if daily_net >= 0 %}border-blue-500{% else %}border-red-500{% endif %}"
+        >
+        <p class="text-sm font-bold text-gray-400 uppercase">Spent Today</p>
+        <p
+            class="text-2xl font-bold {% if daily_net >= 0 %}text-blue-500{% else %}text-red-500{% endif %}"
+        >
+            KES {{ daily_net }}
+        </p>
         </div>
-        <section class="bg-white p-6 rounded-2xl shadow-sm mb-8">
-            <form method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {% csrf_token %}
-                <input type="text" name="title" placeholder="What did you buy?" class="border-slate-200 rounded-lg focus:ring-blue-500">
-                <input type="number" step="0.01" name="amount" placeholder="Amount" class="border-slate-200 rounded-lg">
-                <select  name="category" class="border-slate-200 rounded-lg">
-                    <option value="...">...</option>
-                    <option value="Food">Food</option>
-                    <option value="Utilities">Utilities</option>
-                    <option value="Entertainment">Entertainment</option>
-                    <option value="Rent">Rent</option>
-                    <option value="Transport">Transport</option>
-                </select>
-                <select name="transaction_type" class="border-gray-200 rounded-xl px-4 py-3">
-                    <option value="EXPENSE">Expense</option>
-                    <option value="INCOME">Income</option>
-                </select>
-                <button type="submit" class="bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition">Add</button>
-            </form>
-        </section>
-        <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-            <table class="w-full text-left">
-                <thead class="bg-gray-50 border-b border-gray-100">
-                    <tr>
-                        <th class="px-6 py-4 font-bold text-gray-600">Date</th>
-                        <th class="px-6 py-4 font-bold text-gray-600">Title</th>
-                        <th class="px-6 py-4 font-bold text-gray-600">Category</th>
-                        <th class="px-6 py-4 text-right font-bold text-gray-600">Amount</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    {% for x in expenses %}
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-4 text-gray-500">{{ x.date }}</td>
-                        <td class="px-6 py-4 font-semibold">{{ x.title }}</td>
-                        <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-bold {{ x.category_color_class }}">{{ x.category }}</span></td>
-                        <td class="px-6 py-4 text-right font-black {% if x.transaction_type == 'EXPENSE' %}text-red-500{% else %}text-green-500{% endif %}">
-                            {% if x.transaction_type == 'EXPENSE' %}-{% else %}+{% endif %} KES {{ x.amount }}
-                            <form action="{% url 'delete-expense' x.id %}" method="POST" onsubmit="return confirm('Delete this expense?');">
-            {% csrf_token %}
-            <button type="submit" class="text-slate-300 hover:text-red-600 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-                </button>
-            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div
+        class="bg-white p-6 rounded-2xl shadow-sm border-l-4 {% if weekly_net >= 0 %}border-purple-500{% else %}border-red-500{% endif %}"
+        >
+        <p class="text-sm font-bold text-gray-400 uppercase">This Week</p>
+        <p
+            class="text-2xl font-bold {% if weekly_net >= 0 %}text-purple-500{% else %}text-red-500{% endif %}"
+        >
+            KES {{ weekly_net }}
+        </p>
+        </div>
+        <div
+        class="bg-white p-6 rounded-2xl shadow-sm border-l-4 {% if monthly_net >= 0 %}border-green-500{% else %}border-red-500{% endif %}"
+        >
+        <p class="text-sm font-bold text-gray-400 uppercase">
+            Monthly Net Balance
+        </p>
+        <p
+            class="text-2xl font-bold {% if monthly_net >= 0 %}text-green-600{% else %}text-red-600{% endif %}"
+        >
+            KES {{ monthly_net }}
+        </p>
+        <p class="text-xs text-gray-500">
+            In: {{ monthly_in }} | Out: {{ monthly_out }}
+        </p>
         </div>
     </div>
+    <section class="bg-white p-6 rounded-2xl shadow-sm mb-8">
+        <form method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {% csrf_token %}
+        <input
+            type="text"
+            name="title"
+            placeholder="What did you buy?"
+            class="border-slate-200 rounded-lg focus:ring-blue-500"
+        />
+        <input
+            type="number"
+            step="0.01"
+            name="amount"
+            placeholder="Amount"
+            class="border-slate-200 rounded-lg"
+        />
+        <select name="category" class="border-slate-200 rounded-lg">
+            <option value="...">...</option>
+            <option value="Food">Food</option>
+            <option value="Utilities">Utilities</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Rent">Rent</option>
+            <option value="Transport">Transport</option>
+        </select>
+        <select
+            name="transaction_type"
+            class="border-gray-200 rounded-xl px-4 py-3"
+        >
+            <option value="EXPENSE">Expense</option>
+            <option value="INCOME">Income</option>
+        </select>
+        <button
+            type="submit"
+            class="bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition"
+        >
+            Add
+        </button>
+        </form>
+    </section>
+
+    <div class="max-w-2xl mx-auto p-6">
+        <div class="flex justify-between items-center mb-8">
+        <h1 class="text-2xl font-bold">Today's Expenses</h1>
+        <a
+            href="{% url 'history' %}"
+            class="bg-gray-100 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-200"
+        >
+            View History →
+        </a>
+        </div>
+        <div class="bg-black text-white p-6 rounded-2xl mb-6">
+        <p class="text-gray-400 text-sm">Yesterday you spent</p>
+        <h2 class="text-4xl font-black">KSh {{ total_yesterday }}</h2>
+        </div>
+        {% if expenses %}
+        <ul class="space-y-4">
+        {% for x in expenses %}
+        <li
+            class="flex justify-between p-4 bg-white shadow-sm rounded-xl border border-gray-100"
+        >
+            <div class="px-6 py-2">
+            <p class="font-bold">{{ x.title }}</p>
+            <p class="text-xs text-gray-400">{{ x.created_at|time:"H:i" }}</p>
+            </div>
+            <div class="px-6 py-4">
+            <span
+                class="font-mono px-3 py-1 rounded-full text-xs font-bold {{ x.category_color_class }}"
+                >{{ x.category }}</span
+            >
+            </div>
+            <span
+            class="font-mono px-6 py-4 text-right font-black font-mono font-bold {% if x.transaction_type == 'EXPENSE' %}text-red-500{% else %}text-green-500{% endif %}"
+            >{% if x.transaction_type == 'EXPENSE' %}-{% else %}+{% endif %} KES
+            {{ x.amount }}</span
+            >
+            <form
+            action="{% url 'delete-expense' x.id %}"
+            method="POST"
+            onsubmit="return confirm('Delete this expense?');"
+            >
+            {% csrf_token %}
+            <button
+                type="submit"
+                class="text-slate-300 hover:text-red-600 transition-colors"
+            >
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                >
+                <path
+                    fill-rule="evenodd"
+                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                    clip-rule="evenodd"
+                />
+                </svg>
+            </button>
+            </form>
+        </li>
+        {% endfor %}
+        </ul>
+        {% else %}
+        <div
+        class="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200"
+        >
+        <p class="text-gray-500 italic">It's a new day. Your list is empty!</p>
+        <button
+            class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-full font-bold"
+        >
+            Add First Expense
+        </button>
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}
