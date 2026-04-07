@@ -6,20 +6,20 @@
             <h1 class="text-3xl font-bold text-slate-800">Expense Tracker</h1>
         </header>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-blue-500">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 {% if daily_net >= 0 %}border-blue-500{% else %}border-red-500{% endif %}">
                 <p class="text-sm font-bold text-gray-400 uppercase">Today</p>
-                <p class="text-2xl font-bold text-blue-500">KES {{ daily_net }}</p>
+                <p class="text-2xl font-bold {% if daily_net >= 0 %}text-blue-500{% else %}text-red-500{% endif %}">KES {{ daily_net }}</p>
             </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-purple-500">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 {% if weekly_net >= 0 %}border-purple-500{% else %}border-red-500{% endif %}">
                 <p class="text-sm font-bold text-gray-400 uppercase">This Week</p>
-                <p class="text-2xl font-bold text-purple-500">KES {{ weekly_net }}</p>
+                <p class="text-2xl font-bold {% if weekly_net >= 0 %}text-purple-500{% else %}text-red-500{% endif %}">KES {{ weekly_net }}</p>
             </div>
             <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 {% if monthly_net >= 0 %}border-green-500{% else %}border-red-500{% endif %}">
     <p class="text-sm font-bold text-gray-400 uppercase">Monthly Net Balance</p>
     <p class="text-2xl font-bold {% if monthly_net >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
         KES {{ monthly_net }}
     </p>
-    <p class="text-xs text-gray-500">In: +{{ monthly_in }} | Out: -{{ monthly_out }}</p>
+    <p class="text-xs text-gray-500">In: {{ monthly_in }} | Out: {{ monthly_out }}</p>
 </div>
         </div>
         <section class="bg-white p-6 rounded-2xl shadow-sm mb-8">

@@ -13,7 +13,6 @@ def expense_list(request):
     week_start = today - timedelta(days=today.weekday())
     month_start = today.replace(day=1)
     
-    ##
     if request.method == 'POST':
         title = request.POST.get('title')
         amount = request.POST.get('amount')
@@ -28,9 +27,8 @@ def expense_list(request):
             transaction_type=transaction_type
         )
         return redirect('home')
-    ##
     
-    expenses = Expense.objects.all().order_by('-date')
+    expenses = Expense.objects.all().order_by('-id')
     
     def get_totals(queryset):
         income = queryset.filter(transaction_type='INCOME').aggregate(Sum('amount'))['amount__sum'] or 0
@@ -49,29 +47,7 @@ def expense_list(request):
         else:
             messages.error(request, 'Error!! Plese check the form & try again.')
     
-    def category_color(category):
-        colors = {
-            'Food': 'bg-blue-100 text-blue-800',
-            'Utilities': 'bg-green-100 text-green-800',
-            'Entertainment': 'bg-yellow-100 text-yellow-800',
-            'Rent': 'bg-purple-100 text-purple-800',
-            'Transport': 'bg-red-100 text-red-800'
-        }
-        return colors.get(category, 'bg-gray-100 text-gray-800')
-    
-    food_color = category_color('Food')
-    utilities_color = category_color('Utilities')
-    entertainment_color = category_color('Entertainment')
-    rent_color = category_color('Rent')
-    transport_color = category_color('Transport')
-    
     return render(request, 'Home.html', {
-        'food_color': food_color,
-        'utilities_color': utilities_color,
-        'entertainment_color': entertainment_color,
-        'rent_color': rent_color,
-        'transport_color': transport_color,
-
         'expenses': expenses,
         'daily_in': daily_in,
         'daily_out': daily_out,
