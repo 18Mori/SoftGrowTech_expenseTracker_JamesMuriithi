@@ -3,7 +3,7 @@
     <header class="mb-4 flex justify-between items-center">
         <h1 class="text-3xl font-bold text-slate-800 pt-3 pb-5 px-6">Expense Tracker</h1>
     </header>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 px-6 ">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 px-6 py-4 ">
         <div
         class="bg-white p-6 rounded-2xl shadow-sm border-l-4 {% if daily_net >= 0 %}border-blue-500{% else %}border-red-500{% endif %}"
         >
@@ -40,7 +40,7 @@
         </p>
         </div>
     </div>
-    <section class="bg-white p-6 rounded-2xl shadow-sm mb-8">
+    <section class="bg-white p-6 ml-6 mr-6 rounded-2xl shadow-sm">
         <form method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-4">
         {% csrf_token %}
         <input
@@ -95,11 +95,13 @@
         <h2 class="text-4xl font-black">KSh {{ total_yesterday }}</h2>
         </div>
         {% if expenses %}
-        <ul class="space-y-4">
+        <ul class="space-y-4 overflow-y-auto" style="max-height: 250px; scrollbar-width: none;">
         {% for x in expenses %}
         <li
             class="flex justify-between p-4 bg-white shadow-sm rounded-xl border border-gray-100"
         >
+        
+        <div class="flex flex-col sm:flex-row gap-7 w-full max-w-md">
             <div class="px-6 py-2">
             <p class="font-bold">{{ x.title }}</p>
             <p class="text-xs text-gray-400">{{ x.created_at|time:"H:i" }}</p>
@@ -111,10 +113,11 @@
             >
             </div>
             <span
-            class="font-mono px-6 py-4 items-center align-middle text-right font-black font-mono font-bold {% if x.transaction_type == 'EXPENSE' %}text-red-500{% else %}text-green-500{% endif %}"
+            class="font-mono  text-right font-black font-mono font-bold {% if x.transaction_type == 'EXPENSE' %}text-red-500{% else %}text-green-500{% endif %}"
             >{% if x.transaction_type == 'EXPENSE' %}-{% else %}+{% endif %} KES
             {{ x.amount }}</span
             >
+        </div>
             <form
             action="{% url 'delete-expense' x.id %}"
             method="POST"
