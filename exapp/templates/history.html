@@ -1,5 +1,91 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="max-w-2xl mx-auto p-6">
+    <div class="flex items-center gap-4 mb-8">
+        <a href="{% url 'home' %}" class="text-gray-400 transition-all duration-500 ease-in-out hover:text-gray-600">← Back</a>
+        <h1 class="text-3xl font-black">Transaction History</h1>
+    </div>
+      
+    <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+      <a href="?sort=date" 
+        class="bg-black text-black border px-4 py-2 rounded-full text-xs transition-all duration-500 ease-in-out 
+        {% if request.GET.sort == 'date' or not request.GET.sort %} 
+            bg-black text-white 
+        {% else %} 
+            bg-white text-black hover:bg-gray-100 
+        {% endif %}">
+          Newest
+      </a>
+      <a href="?sort=-amount" 
+        class="bg-black text-black border px-4 py-2 rounded-full text-xs transition-all duration-500 ease-in-out 
+        {% if request.GET.sort == '-amount' or not request.GET.sort %} 
+            bg-black text-white 
+        {% else %} 
+            bg-white text-black hover:bg-gray-100 
+        {% endif %}">
+          Highest Amount
+      </a>
+      <a href="?sort=amount" 
+        class="bg-black text-black border px-4 py-2 rounded-full text-xs transition-all duration-500 ease-in-out 
+        {% if request.GET.sort == 'amount' or not request.GET.sort %} 
+            bg-black text-white 
+        {% else %} 
+            bg-white text-black hover:bg-gray-100 
+        {% endif %}">
+          Lowest Amount
+      </a>
+      <a href="?sort=category" 
+        class="bg-black text-black border px-4 py-2 rounded-full text-xs transition-all duration-500 ease-in-out 
+        {% if request.GET.sort == 'category' or not request.GET.sort %} 
+            bg-black text-white 
+        {% else %} 
+            bg-white text-black hover:bg-gray-100 
+        {% endif %}">
+          By Category
+      </a>
+      
+        <form method="GET" class="ml-auto">
+        <select name="category" onchange="this.form.submit()" class="cursor-pointer rounded-lg border-none text-sm">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+                <option value="{{ cat }}">{{ cat }}</option>
+            {% endfor %}
+        </select>
+    </form>
+    </div>
 
+    {% if expenses %}
+    <div class="space-y-6">
+        {% for x in expenses %}
+            {% ifchanged x.date %}
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mt-8">
+                    {{ x.date|date:"l, F j, Y" }}
+                </h3>
+            {% endifchanged %}
+            
+            <div class="flex justify-between items-center py-3 border-b border-gray-100">
+              <div class="px-6 py-2">
+                <p class="font-bold">{{ x.title }}</p>
+                <p class="text-xs text-gray-400">{{ x.created_at|time:"H:i" }}</p>
+            </div>
+                    <span
+                class="font-mono px-3 py-1 rounded-full text-xs font-bold {{ x.category_color_class }}"
+                >{{ x.category }}</span
+            >
+                <span
+            class="font-mono px-6 py-4 text-right font-black font-mono font-bold {% if x.transaction_type == 'EXPENSE' %}text-red-500{% else %}text-green-500{% endif %}"
+            >{% if x.transaction_type == 'EXPENSE' %}-{% else %}+{% endif %} KES
+            {{ x.amount }}</span
+            >
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+    <div class="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
+        <p class="text-gray-400">No expenses recorded for today yet.</p>
+        <p class="text-sm text-gray-400">Ready to start fresh?</p>
+    </div>
+{% endif %}
 {% endblock %}
