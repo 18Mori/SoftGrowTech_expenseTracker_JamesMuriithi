@@ -31,9 +31,11 @@ def expense_list(request):
             title=title,
             transaction_type=transaction_type
         )
+        messages.success(request, 'Added successfully!')
         return redirect('home')
     
-    expenses = Expense.objects.all().order_by('-created_at')
+    all_expenses = Expense.objects.all()
+    total_expenses = all_expenses.filter(created_at__date=today).order_by('-created_at')
     
     
     def get_totals(queryset):
@@ -41,9 +43,9 @@ def expense_list(request):
         expense = queryset.filter(transaction_type='EXPENSE').aggregate(Sum('amount'))['amount__sum'] or 0
         return income, expense, (income - expense)
     
-    daily_in, daily_out, daily_net = get_totals(expenses.filter(date=today))
-    weekly_in, weekly_out, weekly_net = get_totals(expenses.filter(date__gte=week_start))
-    monthly_in, monthly_out, monthly_net = get_totals(expenses.filter(date__gte=month_start))
+    daily_in, daily_out, daily_net = get_totals(total_expenses.filter(date=today))
+    weekly_in, weekly_out, weekly_net = get_totals(all_expenses.filter(date__gte=week_start))
+    monthly_in, monthly_out, monthly_net = get_totals(all_expenses.filter(date__gte=month_start))
     
     if request.method == "POST":
         serializer = ExpenseSerializer(data=request.POST)
@@ -54,7 +56,7 @@ def expense_list(request):
             messages.error(request, 'Error!! Plese check the form & try again.')
     
     return render(request, 'Home.html', {
-        'expenses': expenses,
+        'expenses': total_expenses,
         'daily_in': daily_in,
         'daily_out': daily_out,
         'daily_net': daily_net,
@@ -65,7 +67,6 @@ def expense_list(request):
         'monthly_out': monthly_out,
         'monthly_net': monthly_net,
         'total_yesterday': total_yesterday,
-        'is_today': True,
     })
 
 def history(request):
@@ -80,7 +81,7 @@ def history(request):
     all_expenses = all_expenses.order_by(sort_by, '-created_at')
     
     context = {
-        'expenses': all_expenses,
+        'total_expenses': all_expenses,
         'is_history': True,
         'categories': Expense.objects.values_list('category', flat=True).distinct()
     }
