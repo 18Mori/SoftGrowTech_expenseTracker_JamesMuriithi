@@ -9,8 +9,25 @@
         <a href="{% url 'home' %}" class="text-gray-400 transition-all duration-500 ease-in-out hover:text-gray-600">← Back</a>
         <h1 class="text-3xl font-black">Transaction History</h1>
     </div>
-      
-    <div class="flex flex-col sm:flex-row w-full max-w-md gap-2 mb-6 overflow-x-auto pb-6 " style="max-height: 250px; scrollbar-width: none;">
+    <div class="flex flex-col sm:flex-row w-full max-w-md gap-4 mb-6 overflow-x-auto pb-6 pt-4 px-4 border-b-4 border-gray-200 shadow-md" style="max-height: 250px; max-width: 100%; scrollbar-width: none;">
+        <div>
+            <div class=" text-gray-400 text-sm mb-1">
+        <p>Filter By:</p>
+      </div>
+        <form method="GET" class="mr-auto">
+      <select name="category" onchange="this.form.submit()" class="cursor-pointer rounded-lg border-none text-sm">
+          <option value="">All Categories</option>
+          {% for cat in categories %}
+              <option value="{{ cat }}">{{ cat }}</option>
+          {% endfor %}
+      </select>
+  </form>
+</div>
+<div>
+    <div class="text-gray-400 text-sm mb-1">
+            <p>Sort By:</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
       <a href="?sort=date" 
         class="bg-black text-black border px-4 py-2 items-center rounded-full text-xs transition-all duration-500 ease-in-out 
         {% if request.GET.sort == 'date' or not request.GET.sort %} 
@@ -27,7 +44,7 @@
         {% else %} 
             bg-white text-black hover:bg-gray-100 
         {% endif %}">
-          Highest Amount
+          ⇡High - Low⇣
       </a>
       <a href="?sort=amount" 
         class="bg-black text-black border px-4 py-2 rounded-full text-xs transition-all duration-500 ease-in-out 
@@ -36,7 +53,7 @@
         {% else %} 
             bg-white text-black hover:bg-gray-100 
         {% endif %}">
-          Lowest Amount
+            ⇣Low - High⇡
       </a>
       <a href="?sort=category" 
         class="bg-black text-black border px-4 py-2 rounded-full text-xs transition-all duration-500 ease-in-out 
@@ -45,18 +62,12 @@
         {% else %} 
             bg-white text-black hover:bg-gray-100 
         {% endif %}">
-          By Category
+            Category
       </a>
     </div>
+    </div>
+</div>
       
-        <form method="GET" class="ml-auto">
-        <select name="category" onchange="this.form.submit()" class="cursor-pointer rounded-lg border-none text-sm">
-            <option value="">All Categories</option>
-            {% for cat in categories %}
-                <option value="{{ cat }}">{{ cat }}</option>
-            {% endfor %}
-        </select>
-    </form>
     
 
     {% if expenses %}
@@ -65,7 +76,7 @@
     {% for day in expenses_by_day %}
     <div class="day-group mb-8">
         
-        <div class="flex justify-between items-end border-b border-gray-100 pb-2 px-4 mb-4 bg-white sticky top-0 z-10">
+        <div class="flex justify-between shadow-md shadow-blue-200 items-end border-b border-gray-100 pb-2 px-4 mb-4 bg-white sticky top-0 z-10">
             <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest">
                 {{ day.grouper|date:"l, F j, Y" }}
             </h3>

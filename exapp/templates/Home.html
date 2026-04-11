@@ -47,16 +47,18 @@
             type="text"
             name="title"
             placeholder="What did you buy?"
-            class="border-slate-200 rounded-lg focus:ring-blue-500 px-4 py-1"
+            class="border-slate-200 rounded-lg ring-1 focus:ring-blue-500 px-4 py-1"
         />
         <input
             type="number"
+            min="0"
+            max="100000"
             step="0.01"
             name="amount"
             placeholder="Amount"
-            class="border-slate-200 rounded-lg px-4 py-1 focus:ring-blue-500"
+            class="border-slate-200 rounded-lg px-4 py-1 ring-1 focus:ring-blue-500"
         />
-        <select name="category" class="border-slate-200 rounded-lg focus:ring-blue-500">
+        <select name="category" class="border-slate-200 rounded-lg px-4 py-1 ring-1 focus:ring-blue-500">
             <option value="...">...</option>
             <option value="Food">Food</option>
             <option value="Utilities">Utilities</option>
@@ -66,7 +68,7 @@
         </select>
         <select
             name="transaction_type"
-            class="border-gray-200 rounded-xl px-4 py-3 focus:ring-blue-500"
+            class="border-gray-200 rounded-lg px-4 py-1 ring-1 focus:ring-blue-500"
         >
             <option value="EXPENSE">Expense</option>
             <option value="INCOME">Income</option>
@@ -154,12 +156,12 @@
         <div
         class="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200"
         >
-        <p class="text-gray-500 italic">It's a new day. Your list is empty!</p>
-        <button
-            class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-full font-bold"
+        <p class="text-gray-500 italic mb-5">It's a new day. Your list is empty!</p>
+        <a href="{% url 'home' %}"
+            class="bg-blue-600 text-white px-6 py-2 rounded-full font-bold"
         >
             Add First Expense
-        </button>
+        </a>
         </div>
         {% endif %}
     </div>
