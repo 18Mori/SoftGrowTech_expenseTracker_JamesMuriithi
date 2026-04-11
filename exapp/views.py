@@ -5,6 +5,7 @@ from django.db.models import Sum
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib import messages
+from django.db.models.functions import TruncDate
 
 
 
@@ -73,16 +74,15 @@ def history(request):
     sort_by = request.GET.get('sort', '-date')
     category_filter = request.GET.get('category')
     
-    all_expenses = Expense.objects.all()
+    all_expenses = Expense.objects.annotate(only_date=TruncDate('created_at'))
     
     if category_filter:
         all_expenses = all_expenses.filter(category=category_filter)
         
-    all_expenses = all_expenses.order_by(sort_by, '-created_at')
+    all_expenses = all_expenses.order_by('-only_date', sort_by)
     
     context = {
-        'total_expenses': all_expenses,
-        'is_history': True,
+        'expenses': all_expenses,
         'categories': Expense.objects.values_list('category', flat=True).distinct()
     }
     return render(request, 'history.html', context)

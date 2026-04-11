@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
-{% block content %}
+{% load expense_extras %}{% block content %}
+
+{% regroup expenses by only_date as expenses_by_day %}
+    
 <div class="max-w-2xl mx-auto p-6">
     <div class="flex items-center gap-4 mb-8">
         <a href="{% url 'home' %}" class="text-gray-400 transition-all duration-500 ease-in-out hover:text-gray-600">← Back</a>
@@ -57,36 +60,51 @@
     
 
     {% if expenses %}
-    <div class="space-y-6" style="max-height: 300px; overflow-y: auto; scrollbar-width: none;">
-        {% for x in expenses %}
-            {% ifchanged x.date %}
-                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mt-8">
-                    {{ x.date|date:"l, F j, Y" }}
-                </h3>
-            {% endifchanged %}
-            
-            <div class="flex justify-between items-center py-3 border-b border-gray-100">
-              <div class="px-6 py-2">
-                <p class="font-bold">{{ x.title }}</p>
-                <p class="text-xs text-gray-400">{{ x.created_at|time:"H:i" }}</p>
+<div class="space-y-6" style="max-height: 600px; overflow-y: auto; scrollbar-width: none;">
+    
+    {% for day in expenses_by_day %}
+    <div class="day-group mb-8">
+        
+        <div class="flex justify-between items-end border-b border-gray-100 pb-2 px-4 mb-4 bg-white sticky top-0 z-10">
+            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest">
+                {{ day.grouper|date:"l, F j, Y" }}
+            </h3>
+            <div class="text-right">
+    <span class="text-[10px] text-slate-400 uppercase font-bold tracking-tight">Daily Net</span>
+    
+    {% with daily_net=day.list|sum_list_amount %}
+    <p class="text-lg font-black font-mono {% if daily_net >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
+        {% if daily_net >= 0 %}+{% endif %} KES {{ daily_net }}
+    </p>
+    {% endwith %}
+</div>
+        </div>
+
+        <div class="space-y-2">
+            {% for x in day.list %}
+            <div class="flex justify-between items-center py-3 bg-white rounded-xl px-2 hover:bg-gray-50 transition-colors">
+                <div class="flex items-center gap-4">
+                    <div class="text-left">
+                        <p class="font-bold text-slate-800">{{ x.title }}</p>
+                        <p class="text-[10px] text-gray-400 uppercase">{{ x.created_at|time:"H:i" }}</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-6">
+                    <span class="font-mono px-3 py-1 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600">
+                        {{ x.category }}
+                    </span>
+                    <span class="font-mono text-right font-black text-sm {% if x.transaction_type == 'EXPENSE' %}text-red-500{% else %}text-green-500{% endif %}">
+                        {% if x.transaction_type == 'EXPENSE' %}-{% else %}+{% endif %} KES {{ x.amount }}
+                    </span>
+                </div>
             </div>
-                    <span
-                class="font-mono px-3 py-1 rounded-full text-xs font-bold {{ x.category_color_class }}"
-                >{{ x.category }}</span
-            >
-                <span
-            class="font-mono px-6 py-4 text-right font-black font-mono font-bold {% if x.transaction_type == 'EXPENSE' %}text-red-500{% else %}text-green-500{% endif %}"
-            >{% if x.transaction_type == 'EXPENSE' %}-{% else %}+{% endif %} KES
-            {{ x.amount }}</span
-            >
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
+    {% endfor %}
+
 </div>
 {% else %}
-    <div class="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-        <p class="text-gray-400">No expenses recorded for today yet.</p>
-        <p class="text-sm text-gray-400">Ready to start fresh?</p>
-    </div>
-{% endif %}
+    {% endif %}
 {% endblock %}
