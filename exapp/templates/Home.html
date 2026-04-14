@@ -1,169 +1,270 @@
 {% extends 'base.html' %} {% block content %}
 <div class="max-w-4xl mx-auto">
-    <header class="mb-4 flex justify-between items-center">
-        <h1 class="text-3xl font-bold text-slate-800 pt-3 pb-5 px-6">Expense Tracker</h1>
-    </header>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 px-6 py-4 ">
-        <div
-        class="bg-white p-6 rounded-2xl shadow-sm border-l-4 {% if daily_net >= 0 %}border-blue-500{% else %}border-red-500{% endif %}"
-        >
-        <p class="text-sm font-bold text-gray-400 uppercase">Spent Today</p>
-        <p
-            class="text-2xl font-bold {% if daily_net >= 0 %}text-blue-500{% else %}text-red-500{% endif %}"
-        >
-            KES {{ daily_net }}
-        </p>
-        </div>
-        <div
-        class="bg-white p-6 rounded-2xl shadow-sm border-l-4 {% if weekly_net >= 0 %}border-purple-500{% else %}border-red-500{% endif %}"
-        >
-        <p class="text-sm font-bold text-gray-400 uppercase">This Week</p>
-        <p
-            class="text-2xl font-bold {% if weekly_net >= 0 %}text-purple-500{% else %}text-red-500{% endif %}"
-        >
-            KES {{ weekly_net }}
-        </p>
-        </div>
-        <div
-        class="bg-white p-6 rounded-2xl shadow-sm border-l-4 {% if monthly_net >= 0 %}border-green-500{% else %}border-red-500{% endif %}"
-        >
-        <p class="text-sm font-bold text-gray-400 uppercase">
-            Monthly Net Balance
-        </p>
-        <p
-            class="text-2xl font-bold {% if monthly_net >= 0 %}text-green-600{% else %}text-red-600{% endif %}"
-        >
-            KES {{ monthly_net }}
-        </p>
-        <p class="text-xs text-gray-500">
-            In: {{ monthly_in }} | Out: {{ monthly_out }}
-        </p>
-        </div>
-    </div>
-    <section class="bg-white p-6 ml-6 mr-6 rounded-2xl shadow-sm">
-        <form method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {% csrf_token %}
-        <input
-            type="text"
-            name="title"
-            placeholder="What did you buy?"
-            class="border-slate-200 rounded-lg ring-1 focus:ring-blue-500 px-4 py-1"
-        />
-        <input
-            type="number"
-            min="0"
-            max="100000"
-            step="0.01"
-            name="amount"
-            placeholder="Amount"
-            class="border-slate-200 rounded-lg px-4 py-1 ring-1 focus:ring-blue-500"
-        />
-        <select name="category" class="border-slate-200 rounded-lg px-4 py-1 ring-1 focus:ring-blue-500">
-            <option value="...">...</option>
-            <option value="Food">Food</option>
-            <option value="Utilities">Utilities</option>
-            <option value="Entertainment">Entertainment</option>
-            <option value="Rent">Rent</option>
-            <option value="Transport">Transport</option>
-        </select>
-        <select
-            name="transaction_type"
-            class="border-gray-200 rounded-lg px-4 py-1 ring-1 focus:ring-blue-500"
-        >
-            <option value="EXPENSE">Expense</option>
-            <option value="INCOME">Income</option>
-        </select>
-        <button
-            type="submit"
-            class="bg-blue-600 text-white font-bold px-4 py-1 rounded-lg transition-all duration-500 ease-in-out hover:bg-blue-700 "
-        >
-            Add
-        </button>
-        </form>
-    </section>
+  <header class="mb-4 flex justify-between items-center">
+    <h1 class="text-3xl font-bold text-slate-800 pt-3 pb-5 px-6">
+      Expense Tracker
+    </h1>
+  </header>
 
-    <div class="max-w-2xl mx-auto p-6">
-        <div class="flex justify-between items-center mb-8">
-        <h1 class="text-2xl font-bold">Transactions</h1>
-        <a
-            href="{% url 'history' %}"
-            class="bg-gray-100 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-500 ease-in-out hover:bg-gray-200"
-        >
-            View History →
-        </a>
-        </div>
-        {% if expenses %}
-        <ul class="space-y-4 overflow-y-auto" style="max-height: 250px; scrollbar-width: none;">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 px-6 py-4">
+    <div
+      class="bg-white p-6 rounded-2xl shadow-sm border-l-4 {% if daily_net >= 0 %}border-blue-500{% else %}border-red-500{% endif %}"
+    >
+      <p class="text-sm font-bold text-gray-400 uppercase">Spent Today</p>
+      <span
+        class="count-up text-2xl font-bold {% if daily_net >= 0 %}text-blue-500{% else %}text-red-500{% endif %}"
+        data-value="{{ daily_net|default:0 }}"
+      >
+        KES 0
+      </span>
+      <p class="text-xs text-gray-500">
+        In: {{ daily_in }} | Out: {{ daily_out }}
+      </p>
+    </div>
+
+    <div
+      class="bg-white p-6 rounded-2xl shadow-sm border-l-4 {% if weekly_net >= 0 %}border-purple-500{% else %}border-red-500{% endif %}"
+    >
+      <p class="text-sm font-bold text-gray-400 uppercase">This Week</p>
+      <span
+        class="count-up text-2xl font-bold {% if weekly_net >= 0 %}text-purple-500{% else %}text-red-500{% endif %}"
+        data-value="{{ weekly_net|default:0 }}"
+      >
+        KES 0
+      </span>
+      <p class="text-xs text-gray-500">
+        In: {{ weekly_in }} | Out: {{ weekly_out }}
+      </p>
+    </div>
+
+    <div
+      class="bg-white p-6 rounded-2xl shadow-sm border-l-4 {% if monthly_net >= 0 %}border-green-500{% else %}border-red-500{% endif %}"
+    >
+      <p class="text-sm font-bold text-gray-400 uppercase">
+        Monthly Net Balance
+      </p>
+      <span
+        class="count-up text-2xl font-bold {% if monthly_net >= 0 %}text-green-600{% else %}text-red-600{% endif %}"
+        data-value="{{ monthly_net|default:0 }}"
+      >
+        KES 0
+      </span>
+      <p class="text-xs text-gray-500">
+        In: {{ monthly_in }} | Out: {{ monthly_out }}
+      </p>
+    </div>
+  </div>
+
+  <section class="bg-white p-6 ml-6 mr-6 rounded-2xl shadow-sm">
+    <form method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {% csrf_token %}
+      <input
+        required
+        type="text"
+        name="title"
+        placeholder="Bought or earned?"
+        class="border-slate-200 rounded-lg ring-1 focus:ring-blue-500 px-4 py-1"
+      />
+      <input
+        required
+        type="number"
+        min="0"
+        max="9999999"
+        step="0.01"
+        name="amount"
+        placeholder="Amount"
+        class="border-slate-200 rounded-lg px-4 py-1 ring-1 focus:ring-blue-500"
+      />
+      <select
+        name="category"
+        class="border-slate-200 rounded-lg px-4 py-1 ring-1 focus:ring-blue-500"
+      >
+        <option value="" disabled selected>Choose a category</option>
+        <option value="Earned">Earned</option>
+        <option value="Food">Food</option>
+        <option value="Utilities">Utilities</option>
+        <option value="Entertainment">Entertainment</option>
+        <option value="Rent">Rent</option>
+        <option value="Transport">Transport</option>
+      </select>
+      <select
+        name="transaction_type"
+        class="border-gray-200 rounded-lg px-4 py-1 ring-1 focus:ring-blue-500"
+      >
+        <option value="" disabled selected>Choose a T.type</option>
+        <option value="EXPENSE">Expense</option>
+        <option value="INCOME">Income</option>
+      </select>
+      <button
+        type="submit"
+        class="bg-blue-600 text-white font-bold px-4 py-1 rounded-lg transition-all duration-500 hover:bg-blue-700"
+      >
+        Add
+      </button>
+    </form>
+  </section>
+
+  <div class="max-w-2xl mx-auto p-6">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-2xl font-bold">Transactions</h1>
+      <a
+        href="{% url 'history' %}"
+        class="bg-gray-100 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-200 transition-all"
+      >
+        View History →
+      </a>
+    </div>
+
+    {% if expenses %}
+    <div class="relative">
+      <ul
+        id="expenseList"
+        class="space-y-4 overflow-y-auto scroll-smooth"
+        style="max-height: 250px; scrollbar-width: none"
+      >
         {% for x in expenses %}
         <li
-            class="flex justify-between p-4 bg-white shadow-sm rounded-xl border border-gray-100"
+          class="flex justify-between p-4 bg-white shadow-sm rounded-xl border border-gray-100"
         >
-        
-        <div class="flex flex-col sm:flex-row gap-5 items-start sm:items-center">
-            <div class='px-3 mt-2 mb-2 items-center border-r-2 border-gray-200'>
-                <p class="text-xs text-gray-400 items-center">{{ x.created_at|time:"H:i" }}</p>
+          <div
+            class="flex flex-col sm:flex-row gap-5 items-start sm:items-center"
+          >
+            <div class="px-3 border-r-2 border-gray-200">
+              <p class="text-xs text-gray-400">{{ x.created_at|time:"H:i" }}</p>
             </div>
-                <div class="">
-                    <p class="font-bold">{{ x.title }}</p>
-                </div>
-                
-            </div>
-            <div class='ml-2'>
-                <span
-                    class="font-mono px-3 py-1 items-center rounded-full text-xs font-bold {{ x.category_color_class }}"
-                >{{ x.category }}
-                </span>
-            </div>
-        <div class="flex items-center flex-row sm:flex-row gap-4 ">
+            <p class="font-bold">{{ x.title }}</p>
+          </div>
+          <div class="ml-2">
             <span
-            class="font-mono text-right font-black font-mono font-bold {% if x.transaction_type == 'EXPENSE' %}text-red-500{% else %}text-green-500{% endif %}"
-            >{% if x.transaction_type == 'EXPENSE' %}-{% else %}+{% endif %} KES
-            {{ x.amount }}</span
+              class="font-mono px-3 py-1 rounded-full text-xs font-bold {{ x.category_color_class }}"
             >
-                <form
-                action="{% url 'delete-expense' x.id %}"
-                method="POST"
-                onsubmit="return confirm('Delete this expense?');"
+              {{ x.category }}
+            </span>
+          </div>
+          <div class="flex items-center gap-4">
+            <span
+              class="font-mono text-right font-bold {% if x.transaction_type == 'EXPENSE' %}text-red-500{% else %}text-green-500{% endif %}"
+            >
+              {% if x.transaction_type == 'EXPENSE' %}-{% else %}+{% endif %}
+              KES {{ x.amount }}
+            </span>
+            <form
+              action="{% url 'delete-expense' x.id %}"
+              method="POST"
+              onsubmit="return confirm('Delete?');"
+            >
+              {% csrf_token %}
+              <button
+                type="submit"
+                class="text-slate-300 hover:text-red-600 transition-all"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
                 >
-                {% csrf_token %}
-                <button
-                    type="submit"
-                    class="text-slate-300 transition-all duration-500 ease-in-out hover:text-red-600"
-                >
-                    <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    >
-                    <path
-                        fill-rule="evenodd"
-                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                        clip-rule="evenodd"
-                    />
-                    </svg>
-                </button>
-                </form>
-        </div>
+                  <path
+                    fill-rule="evenodd"
+                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+            </form>
+          </div>
         </li>
         {% endfor %}
-        </ul>
-        {% else %}
-        <div class="bg-black text-white p-6 rounded-2xl mb-6">
-        <p class="text-gray-400 text-sm">Yesterday you spent</p>
-        <h2 class="text-4xl font-black">KSh {{ total_yesterday }}</h2>
-        </div>
-        <div
-        class="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200"
+      </ul>
+
+      <button
+        id="scrollBtn"
+        class="opacity-0 pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white p-3 rounded-full shadow-lg animate-bounce transition-all duration-500 hover:scale-110 active:scale-95 z-10 hover:bg-opacity-50"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
         >
-        <p class="text-gray-500 italic mb-5">It's a new day. Your list is empty!</p>
-        <a href="{% url 'home' %}"
-            class="bg-blue-600 text-white px-6 py-2 rounded-full font-bold"
-        >
-            Add First Expense
-        </a>
-        </div>
-        {% endif %}
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="3"
+            d="M19 14l-7 7m0 0l-7-7m7 7V3"
+          />
+        </svg>
+      </button>
     </div>
+    {% else %}
+    <div class="bg-black text-white p-6 rounded-2xl mb-6 text-center">
+      <p class="text-gray-400 text-sm">Yesterday you spent</p>
+      <h2
+        class="count-up text-4xl font-black"
+        data-value="{{ total_yesterday|default:0 }}"
+      >
+        KSh 0
+      </h2>
+    </div>
+    {% endif %}
+  </div>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // SCROLL BUTTON LOGIC
+    const list = document.getElementById("expenseList");
+    const btn = document.getElementById("scrollBtn");
+
+    if (list && btn) {
+      const checkOverflow = () => {
+        const hasOverflow = list.scrollHeight > list.clientHeight;
+        const isAtBottom =
+          list.scrollHeight - list.scrollTop <= list.clientHeight + 20;
+
+        if (hasOverflow && !isAtBottom) {
+          btn.classList.replace("opacity-0", "opacity-100");
+          btn.classList.replace("pointer-events-none", "pointer-events-auto");
+        } else {
+          btn.classList.replace("opacity-100", "opacity-0");
+          btn.classList.replace("pointer-events-auto", "pointer-events-none");
+        }
+      };
+
+      btn.addEventListener("click", () => {
+        list.scrollTo({ top: list.scrollHeight, behavior: "smooth" });
+      });
+
+      list.addEventListener("scroll", checkOverflow);
+      window.addEventListener("resize", checkOverflow);
+      setTimeout(checkOverflow, 100); // Initial check
+    }
+
+    // COUNT-UP LOGIC
+    const counters = document.querySelectorAll(".count-up");
+    const animate = (el) => {
+      const target = parseFloat(el.getAttribute("data-value"));
+      const duration = 1500;
+      const startTime = performance.now();
+
+      const update = (currentTime) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = 1 - Math.pow(2, -10 * progress);
+        const current = target * ease;
+
+        el.innerText = `KES ${Math.floor(current).toLocaleString()}`;
+
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        } else {
+          el.innerText = `KES ${target.toLocaleString()}`;
+        }
+      };
+      requestAnimationFrame(update);
+    };
+    counters.forEach((count) => animate(count));
+  });
+</script>
 {% endblock %}

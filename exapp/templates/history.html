@@ -71,7 +71,7 @@
     
 
     {% if expenses %}
-<div class="space-y-6" style="max-height: 600px; overflow-y: auto; scrollbar-width: none;">
+<div id="expenseList" class="space-y-6" style="max-height: 600px; overflow-y: auto; scrollbar-width: none;">
     
     {% for day in expenses_by_day %}
     <div class="day-group mb-8">
@@ -116,6 +116,45 @@
     {% endfor %}
 
 </div>
+    <button id="scrollBtn" class="opacity-0 pointer-events-none fixed bottom-8 left-1/2 -translate-x-1/2 bg-black text-white p-3 rounded-full shadow-2xl transition-all duration-500 z-50 hover:scale-110 active:scale-95 hover:bg-opacity-50">
+            <svg id="scrollIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+        </button>
 {% else %}
+        <div class="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+        <p class="text-gray-400 italic">No transactions found for this filter.</p>
+    </div>
     {% endif %}
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const list = document.getElementById("expenseList");
+    const btn = document.getElementById("scrollBtn");
+
+    if (list && btn) {
+      const checkOverflow = () => {
+        const hasOverflow = list.scrollHeight > list.clientHeight;
+        // Check if we are within 10px of the bottom
+        const isAtBottom = list.scrollHeight - list.scrollTop <= list.clientHeight + 10;
+
+        if (hasOverflow && !isAtBottom) {
+          btn.style.opacity = "1";
+          btn.style.pointerEvents = "auto";
+        } else {
+          btn.style.opacity = "0";
+          btn.style.pointerEvents = "none";
+        }
+      };
+
+      btn.addEventListener("click", () => {
+        list.scrollTo({ top: list.scrollHeight, behavior: "smooth" });
+      });
+
+      list.addEventListener("scroll", checkOverflow);
+      window.addEventListener("resize", checkOverflow);
+      setTimeout(checkOverflow, 200); 
+    }
+  });
+</script>
 {% endblock %}
